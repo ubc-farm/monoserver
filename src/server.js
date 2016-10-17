@@ -3,6 +3,7 @@ import { Server } from 'hapi';
 import Inert from 'inert';
 import Vision from 'vision';
 import Handlebars from 'handlebars';
+import { apolloHapi, graphiqlHapi } from 'apollo-server';
 
 const showDebug = process.env.NODE_ENV === 'development' && ['error'];
 
@@ -10,7 +11,6 @@ const showDebug = process.env.NODE_ENV === 'development' && ['error'];
 const server = new Server({
 	connections: {
 		routes: {
-			cors: true,
 			response: {
 				emptyStatusCode: 204,
 				failAction: 'log',
@@ -25,7 +25,24 @@ server.connection({
 	port: Number.isNaN(port) ? null : port,
 });
 
-const plugins = [Inert, Vision];
+const plugins = [
+	Inert,
+	Vision,
+	/*{	register: apolloHapi,
+		options: {
+			path: '/graphql',
+			route: { cors: true },
+			apolloOptions: {},
+		},
+	},
+	{	register: graphiqlHapi,
+		options: {
+			path: '/graphiql',
+			graphiqlOptions: { endpointURL: '/graphql' },
+		},
+	},*/
+];
+
 /** @type {Promise<Hapi.Server>} resolves with the server instance */
 const registration = Promise
 	.all(plugins.map(plugin => server.register(plugin)))

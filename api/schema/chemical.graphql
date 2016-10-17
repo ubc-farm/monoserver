@@ -1,0 +1,6 @@
+type Chemical {
+	id: ID!
+	type: String!
+	name: String
+	composition: [String]
+}

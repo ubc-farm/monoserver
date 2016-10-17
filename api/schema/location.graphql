@@ -1,0 +1,29 @@
+scalar Position
+
+interface Location {
+  id: ID!
+  name: String
+  position: Position
+}
+
+type Storage implements Location {
+  id: ID!
+  name: String
+  position: Position
+  stores: [Equipment]
+}
+
+type Field implements Location {
+  id: ID!
+  name: String
+  position: Position # center
+  path: [Position]
+  parent: Field
+  children: [Field]
+  grid: {
+    angle: Float
+    widths: [Float]
+    heights: [Float]
+  }
+  crops: [Crop]
+}

@@ -1,0 +1,28 @@
+scalar Interval
+scalar Money
+
+type ItemInfo {
+	id: ID!
+	name: String
+	sku: String
+	barcode: String
+	supplier: Company
+	lifespan: Interval
+	equipment: [Equipment]
+	value: Money
+	salvageValue: Money
+}
+
+type Equipment {
+	id: ID!
+	product: ItemInfo!
+	location: Location
+	quantity: Float
+	description: String
+	purchase: Sale
+	usage: {
+		quantityUsed: Float
+		info: UsesEquipment
+		duration: Interval
+	}
+}

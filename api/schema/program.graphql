@@ -1,0 +1,13 @@
+struct Color
+
+type Program {
+	id: ID!
+	name: String
+	color: Color
+	textColor: Color
+	linkedAccount: Account
+}
+
+type Account {
+	id: ID!
+}

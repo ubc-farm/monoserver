@@ -1,0 +1,83 @@
+scalar Email
+scalar Phone
+scalar Address
+
+interface Person {
+	id: ID!
+	name: String
+	email: Email
+	phone: Phone
+	mailingAddress: Address
+	physicalAddress: Address
+}
+
+scalar Date
+scalar Interval
+scalar Money
+
+type Employee {
+	id: ID!
+	name: String
+	email: Email
+	phone: Phone
+	mailingAddress: Address
+	physicalAddress: Address
+	hourlyPay: Money
+	role: String
+	fullTime: Boolean
+	partTime: Boolean
+	holidays: [Date]
+	sick: [Date]
+	paidLeave: [Date]
+	unavaliable: [Date] # aggregates holiday, sick, paidLeave dates
+	inLieuHours: Interval
+	medicalLeaveTime: [Interval]
+	emergencyContact: Person
+}
+
+type Company {
+	id: ID!
+	name: String
+	email: Email
+	phone: Phone
+	mailingAddress: Address
+	physicalAddress: Address
+	supplies: [ItemInfo]
+}
+
+scalar URL
+
+type Researcher {
+	id: ID!
+	name: String
+	email: Email
+	phone: Phone
+	mailingAddress: Address
+	physicalAddress: Address
+	position: String
+	faculty: String
+	department: String
+	labWebsite: URL
+	expertise: String
+	coursesTaught: [String]
+	projects: [ResearchProject]
+}
+
+type ResearchProject {
+	id: ID!
+	researcher: Researcher!
+	title: String
+	date: Interval
+
+	postDocs: Int
+	phds: Int
+	masters: Int
+	bachelors: Int
+	others: Int
+	totalMembers: Int
+
+	grant: {
+		value: Money
+		source: Person
+	}
+}

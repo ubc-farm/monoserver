@@ -1,16 +1,42 @@
-import { join, isAbsolute, dirname } from 'path';
+import { join, isAbsolute } from 'path';
 
 /* eslint-disable global-require */
 
 export class ConfigError extends Error {
-	constructor(path, missingFile) {
-		if (!missingFile) {
-			super('No server-plugin path found, ' +
-				`check package.json in ${path} for ubc-farm.server-plugin field`);
+	constructor(key, path) {
+		if (key) {
+			super(`No path found, check package.json in ${path} for ${key} field`);
 		} else {
 			super(`No package.json found in ${path}`);
 		}
 	}
+}
+
+/**
+ * Searches for a package.json file in the given folder, and the path to the
+ * module used is taken from the key path given. The path is relative to the
+ * package.json location. Returns the required module.
+ * @param {string} key - any . character will be used to find nested properties
+ * @param {string} [folder] to search, defaults to process.cwd()
+ * @return {*}
+ */
+export function requireFromConfig(key, folder = process.cwd()) {
+	/* eslint-disable import/no-dynamic-require */
+	const path = isAbsolute(folder) ? folder : join(process.cwd(), folder);
+
+	let json;
+	try {
+		json = require(join(path, 'package.json'));
+	} catch (err) {
+		throw new ConfigError(false, path);
+	}
+
+	let pluginPath = key.split('.')
+		.reduce((val, prop) => val && prop in val && val[prop], json);
+	if (!pluginPath) throw new ConfigError(key, path);
+	pluginPath = join(path, pluginPath);
+
+	return require(pluginPath);
 }
 
 /**
@@ -24,21 +50,7 @@ export class ConfigError extends Error {
  * @param {Object} [options] passed to server.register
  * @returns {Promise<void>} resolves once plugin has registered.
  */
-export default async function importPlugin(server, folder = process.cwd(), options) {
-	if (!server) throw new TypeError('Missing Hapi server');
-	const path = isAbsolute(folder) ? folder : join(process.cwd(), folder);
-
-	let json;
-	try {
-		json = require(join(path, 'package.json'));
-	} catch (err) {
-		throw new ConfigError(path, err);
-	}
-
-	let pluginPath = json['ubc-farm'] && json['ubc-farm']['server-plugin'];
-	if (!pluginPath) throw new ConfigError(path);
-	pluginPath = join(path, pluginPath);
-
-	const plugin = require(pluginPath);
+export default async function importPlugin(server, folder, options) {
+	const plugin = requireFromConfig('ubc-farm.server-plugin', folder);
 	await server.register(plugin, Object.assign({ once: true }, options));
 }

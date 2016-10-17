@@ -1,0 +1,34 @@
+scalar Date
+scalar URL
+
+type Plant {
+	latinName: String!
+	info: URL
+	name: String
+	image: URL
+}
+
+type Crop {
+	id: ID!
+	variety: [Plant] # Can have a mix of seeds
+	grownIn: Field
+	expectedHarvest: Date
+	predictedNutrientReq: String
+	predictedYield: Float
+	pests: [PestAction]
+}
+
+type Pest {
+	latinName: String!
+	info: URL
+	name: String
+	image: URL
+}
+
+type PestAction {
+	id: ID!
+	pest: Pest!
+	percentAreaAffected: Float
+	percentPlantsAffected: Float
+	economicThreshold: Float
+}

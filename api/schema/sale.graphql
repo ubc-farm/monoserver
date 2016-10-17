@@ -1,0 +1,16 @@
+scalar Money
+scalar Date
+
+type Sale {
+	id: ID!
+	orderDate: Date
+	deliveryDate: Date
+	customer: Person
+	deliveryLocation: Location
+	quantity: Float
+	price: Money
+	discount: Money
+	tax: Money
+	notes: String
+	budgetLineNumber: Float
+}
